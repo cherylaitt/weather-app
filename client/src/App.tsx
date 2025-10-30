@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import WeatherInfoCard from './components/molecules/WeatherInfoCard';
 import Button from './components/atoms/Button';
+import { FaTemperatureHalf } from 'react-icons/fa6';
+import { FaLocationDot } from 'react-icons/fa6';
+import { RiWaterPercentLine } from 'react-icons/ri';
+import { FaRegSun } from 'react-icons/fa';
+import { BsFillLightningFill } from 'react-icons/bs';
+import { FaCloudRain } from 'react-icons/fa';
+import { FiRefreshCw } from 'react-icons/fi';
 
 interface WeatherData {
   temperature: {
@@ -147,35 +154,41 @@ function App() {
 
               <div className="weather-info">
                 <WeatherInfoCard
-                  label="📍 Location"
+                  icon={<FaLocationDot size={20} />}
+                  label="Location"
                   value={weather.place}
                   recordedTime={''}
                 />
                 <WeatherInfoCard
-                  label="🌡️ Temperature"
+                  icon={<FaTemperatureHalf size={20} />}
+                  label="Temperature"
                   value={`${weather.temperature.data.value}°C`}
                   recordedTime={weather.temperature.recordedTime}
                 />
                 <WeatherInfoCard
-                  label="💧 Humidity"
+                  icon={<RiWaterPercentLine size={20} />}
+                  label="Humidity"
                   value={`${weather.humidity.data.value}${weather.humidity.data.unit === 'percent' ? '%' : ''}`}
                   recordedTime={weather.humidity.recordedTime}
                 />
                 <WeatherInfoCard
-                  label="☀️ UV Index"
+                  icon={<FaRegSun size={20} />}
+                  label="UV Index"
                   value={`${weather.uvIndex.value} - ${weather.uvIndex.desc}`}
                   recordedTime={''}
                 />
                 {weather.lightning && (
                   <WeatherInfoCard
-                    label="⚡ Lightning"
+                    icon={<BsFillLightningFill size={20} />}
+                    label="Lightning"
                     value={weather.lightning?.data?.occur ? 'Detected' : 'None'}
                     recordedTime={weather.lightning.endTime || weather.lightning.startTime || ''}
                   />
                 )}
                 {weather.rainfall && weather.rainfall.data && (
                   <WeatherInfoCard
-                    label="🌧️ Rainfall"
+                    icon={<FaCloudRain size={20} />}
+                    label="Rainfall"
                     value={`${weather.rainfall.data.min}-${weather.rainfall.data.max} ${weather.rainfall.data.unit}`}
                     startTime={weather.rainfall.startTime}
                     endTime={weather.rainfall.endTime}
@@ -216,7 +229,7 @@ function App() {
               <div className="update-time">
                 Last updated: {new Date(weather.updateTime).toLocaleString()}
               </div>
-              <Button label="🔄 Refresh" onClick={fetchWeatherData} />
+              <Button icon={<FiRefreshCw size={20} />} label="Refresh" onClick={fetchWeatherData} />
             </div>
           </div>
         )}

@@ -16,7 +16,8 @@
   "description": "",
   "dependencies": {
     "express": "^4.18.2",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "concurrently": "^7.6.0"
