@@ -17,6 +17,9 @@ app.use((req, res, next) => {
 
 // Weather API endpoint
 app.get('/api/weather', async (req, res) => {
+    // get the location from the request
+    const location = req.query.location || 'Hong Kong Observatory';
+
     try {
         console.log('Fetching weather data from Hong Kong Observatory...');
         
@@ -43,13 +46,37 @@ app.get('/api/weather', async (req, res) => {
         
         // Extract temperature from Hong Kong Observatory data
         const temperatureData = data.temperature?.data?.find((t) => 
-            t.place === 'Hong Kong Observatory'
+            t.place === location
         );
         
         // Extract humidity data
         const humidityData = data.humidity?.data?.find((h) => 
-            h.place === 'Hong Kong Observatory'
+            h.place === location
         );
+
+        const rainfallData = data.rainfall?.data?.find((r) => 
+            r.place === location
+        );
+
+        const lightningData = data.lightening?.data?.find((l) => 
+            l.place === location
+        );
+
+        let uvIndexData = 0;
+        
+        if (data.uvindex?.data?.length > 0) {
+            if (data.uvindex?.data?.find((u) => 
+                u.place === location
+            )) {
+                uvIndexData = data.uvindex?.data?.find((u) => 
+                    u.place === location
+                )
+            } else {
+                uvIndexData = data.uvindex?.data?.find((u) => 
+                    u.place === "King's Park"
+                )
+            }
+        }
         
         // Get weather icon and description
         const weatherIcon = data.icon?.[0] || 0;
@@ -57,44 +84,41 @@ app.get('/api/weather', async (req, res) => {
         
         // Transform data for frontend
         const weatherData = {
-            temperature: temperatureData?.value || 0,
+            city: 'Hong Kong',
+            temperature: {
+                data: temperatureData,
+                recordedTime: data.temperature?.recordedTime || new Date().toISOString()
+            },
             description: weatherDescription,
             icon: weatherIcon,
-            humidity: humidityData?.value || 0,
-            windSpeed: 0, // Wind data not available in this API endpoint
-            city: 'Hong Kong',
+            lightning: {
+                data: lightningData,
+                startTime: data.lightening?.startTime,
+                endTime: data.lightening?.endTime
+            },
+            rainfall: {
+                data: rainfallData,
+                startTime: data.rainfall?.startTime || new Date().toISOString(),
+                endTime: data.rainfall?.endTime || new Date().toISOString()
+            },
+            uvIndex: uvIndexData,
+            humidity: {
+                data: humidityData,
+                recordedTime: data.humidity?.recordedTime || new Date().toISOString()
+            },
             warningMessage: data.warningMessage || '',
-            place: temperatureData?.place || 'Hong Kong Observatory',
+            rainstormReminder: data.rainstormReminder,
+            specialWeatherTips: data.specialWxTips,
+            tropicalCycloneMessage: data.tcmessage,
+            place: location || 'Hong Kong Observatory',
             updateTime: data.updateTime || new Date().toISOString()
         };
-        
-        console.log('Weather data fetched successfully:', {
-            temperature: weatherData.temperature,
-            description: weatherData.description,
-            humidity: weatherData.humidity
-        });
         
         res.json(weatherData);
         
     } catch (error) {
         console.error('Error fetching weather data:', error);
-        
-        // Fallback to mock data if API is unavailable
-        console.log('Using fallback weather data...');
-        const fallbackData = {
-            temperature: 25,
-            description: 'Partly Cloudy',
-            icon: 51,
-            humidity: 75,
-            windSpeed: 0,
-            city: 'Hong Kong',
-            warningMessage: '',
-            place: 'Hong Kong Observatory',
-            updateTime: new Date().toISOString(),
-            isFallback: true
-        };
-        
-        res.json(fallbackData);
+        res.status(500).json({ error: 'Failed to fetch weather data' });
     }
 });
 
