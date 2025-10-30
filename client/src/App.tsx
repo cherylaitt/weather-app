@@ -177,7 +177,8 @@ function App() {
                   <WeatherInfoCard
                     label="🌧️ Rainfall"
                     value={`${weather.rainfall.data.min}-${weather.rainfall.data.max} ${weather.rainfall.data.unit}`}
-                    recordedTime={weather.rainfall.endTime || weather.rainfall.startTime}
+                    startTime={weather.rainfall.startTime}
+                    endTime={weather.rainfall.endTime}
                   />
                 )}
               </div>
