@@ -2,14 +2,54 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 interface WeatherData {
-  temperature: number;
+  temperature: {
+    data: {
+      place: string;
+      value: number;
+      unit: string;
+    },
+    recordedTime: string;
+  };
   description: string;
   icon: number;
-  humidity: number;
-  windSpeed: number;
+  uvIndex: {
+    value: number;
+    place: string;
+    desc: string;
+  };
+  humidity: {
+    data: {
+      place: string;
+      value: number;
+      unit: string;
+    },
+    recordedTime: string;
+  };
+  lightning?: {
+    data?: {
+      place?: string;
+      occur?: boolean;
+    },
+    startTime?: string;
+    endTime?: string;
+  };
+  rainfall?: {
+    data?: {
+      place: string;
+      unit: string;
+      max: number;
+      min: number;
+    },
+    startTime: string;
+    endTime: string;
+  };
   city: string;
   warningMessage?: string;
+  specialWeatherTips?: string;
+  rainstormReminder?: string;
+  tropicalCycloneMessage?: string;
   place: string;
+  updateTime: string;
   isFallback?: boolean;
 }
 
@@ -28,7 +68,7 @@ function App() {
       setError(null);
       
       // Call our backend API directly
-      const response = await fetch('http://localhost:5001/api/weather');
+      const response = await fetch('http://localhost:5001/api/weather?location=Hong Kong Observatory');
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -37,44 +77,14 @@ function App() {
       
       const data = await response.json();
       
-        setWeather({
-          temperature: data.temperature,
-          description: data.description,
-          icon: data.icon,
-          humidity: data.humidity,
-          windSpeed: data.windSpeed,
-          city: data.city,
-          warningMessage: data.warningMessage,
-          place: data.place,
-          isFallback: data.isFallback
-        });
+      setWeather(data as WeatherData);
+
     } catch (err) {
       setError('Failed to load weather data. Please try again later.');
       console.error('Error fetching weather:', err);
     } finally {
       setLoading(false);
     }
-  };
-
-  const getWeatherIcon = (iconCode: number) => {
-    // Hong Kong Observatory weather icon codes
-    const iconMap: { [key: number]: string } = {
-      50: '☀️', // Sunny
-      51: '⛅', // Partly Cloudy
-      52: '☁️', // Cloudy
-      53: '☁️', // Overcast
-      60: '🌦️', // Light Rain
-      61: '🌧️', // Rain
-      62: '🌧️', // Heavy Rain
-      63: '⛈️', // Thunderstorm
-      64: '☁️', // Overcast
-      65: '🌧️', // Rain
-      70: '❄️', // Snow
-      80: '🌫️', // Mist
-      81: '🌫️', // Fog
-      90: '🌫️'  // Haze
-    };
-    return iconMap[iconCode] || '🌤️';
   };
 
   if (loading) {
@@ -108,9 +118,9 @@ function App() {
   return (
     <div className="App">
       <div className="weather-container">
-        <h1 className="app-title">🌤️ Weather in Hong Kong</h1>
+        <h1 className="app-title">Weather in {weather?.city}</h1>
         
-        {weather?.isFallback && (
+        {!weather&& (
           <div className="fallback-notice">
             <span className="fallback-icon">⚠️</span>
             <span className="fallback-text">Using sample data - Hong Kong Observatory API temporarily unavailable</span>
@@ -124,7 +134,7 @@ function App() {
                 {getWeatherIcon(weather.icon)}
               </div>
               <div className="temperature">
-                {weather.temperature}°C
+                {weather.temperature.data.value}°C
               </div>
             </div>
             
@@ -132,6 +142,41 @@ function App() {
               <h2 className="weather-description">
                 {weather.description.charAt(0).toUpperCase() + weather.description.slice(1)}
               </h2>
+
+              <div className="weather-info">
+                <div className="info-item">
+                  <span className="info-label">📍 Location</span>
+                  <span className="info-value">{weather.place}</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">🌡️ Temperature</span>
+                  <span className="info-value">{weather.temperature.data.value}°C</span>
+                </div>
+                <div className="info-item">
+                  <span className="info-label">💧 Humidity</span>
+                  <span className="info-value">{weather.humidity.data.value}{weather.humidity.data.unit === 'percent' ? '%' : ''}</span>
+
+                  {/* {weather.humidity.recordedTime && (
+                    <span className="info-value">Recorded at {new Date(weather.humidity.recordedTime).toLocaleString()}</span>
+                  )} */}
+                </div>
+                <div className="info-item">
+                  <span className="info-label">☀️ UV Index</span>
+                  <span className="info-value">{weather.uvIndex.value} - {weather.uvIndex.desc}</span>
+                </div>
+                {weather.lightning && (
+                  <div className="info-item">
+                    <span className="info-label">⚡ Lightning</span>
+                    <span className="info-value">{weather.lightning && weather.lightning?.data?.occur ? 'Detected' : 'None'}</span>
+                  </div>
+                )}
+                {weather.rainfall && weather.rainfall.data && (
+                  <div className="info-item">
+                    <span className="info-label">🌧️ Rainfall</span>
+                    <span className="info-value">{weather.rainfall.data.min}-{weather.rainfall.data.max} {weather.rainfall.data.unit}</span>
+                  </div>
+                )}
+              </div>
               
               {weather.warningMessage && (
                 <div className="weather-warning">
@@ -140,31 +185,36 @@ function App() {
                 </div>
               )}
               
-              <div className="weather-info">
-                <div className="info-item">
-                  <span className="info-label">💧 Humidity</span>
-                  <span className="info-value">{weather.humidity}%</span>
+              {weather.specialWeatherTips && (
+                <div className="weather-tips">
+                  <span className="tips-icon">💡</span>
+                  <span className="tips-text">{weather.specialWeatherTips}</span>
                 </div>
-                {weather.windSpeed > 0 && (
-                  <div className="info-item">
-                    <span className="info-label">💨 Wind Speed</span>
-                    <span className="info-value">{weather.windSpeed} m/s</span>
-                  </div>
-                )}
-                <div className="info-item">
-                  <span className="info-label">📍 Location</span>
-                  <span className="info-value">{weather.place}</span>
+              )}
+              
+              {weather.rainstormReminder && (
+                <div className="rainstorm-reminder">
+                  <span className="reminder-icon">🌧️</span>
+                  <span className="reminder-text">{weather.rainstormReminder}</span>
                 </div>
-                <div className="info-item">
-                  <span className="info-label">🌡️ Temperature</span>
-                  <span className="info-value">{weather.temperature}°C</span>
+              )}
+              
+              {weather.tropicalCycloneMessage && (
+                <div className="cyclone-message">
+                  <span className="cyclone-icon">🌀</span>
+                  <span className="cyclone-text">{weather.tropicalCycloneMessage}</span>
                 </div>
-              </div>
+              )}
             </div>
             
-            <button onClick={fetchWeatherData} className="refresh-btn">
-              🔄 Refresh
-            </button>
+            <div className="weather-footer">
+              <div className="update-time">
+                Last updated: {new Date(weather.updateTime).toLocaleString()}
+              </div>
+              <button onClick={fetchWeatherData} className="refresh-btn">
+                🔄 Refresh
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -173,3 +223,24 @@ function App() {
 }
 
 export default App;
+
+const getWeatherIcon = (iconCode: number) => {
+  // Hong Kong Observatory weather icon codes
+  const iconMap: { [key: number]: string } = {
+    50: '☀️', // Sunny
+    51: '⛅', // Partly Cloudy
+    52: '☁️', // Cloudy
+    53: '☁️', // Overcast
+    60: '🌦️', // Light Rain
+    61: '🌧️', // Rain
+    62: '🌧️', // Heavy Rain
+    63: '⛈️', // Thunderstorm
+    64: '☁️', // Overcast
+    65: '🌧️', // Rain
+    70: '❄️', // Snow
+    80: '🌫️', // Mist
+    81: '🌫️', // Fog
+    90: '🌫️'  // Haze
+  };
+  return iconMap[iconCode] || '🌤️';
+};

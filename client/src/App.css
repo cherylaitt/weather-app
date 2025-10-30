@@ -139,6 +139,85 @@ body {
   }
 }
 
+.weather-tips {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+}
+
+.tips-icon {
+  font-size: 1.2rem;
+}
+
+.tips-text {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.rainstorm-reminder {
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(116, 185, 255, 0.3);
+}
+
+.reminder-icon {
+  font-size: 1.2rem;
+}
+
+.reminder-text {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.cyclone-message {
+  background: linear-gradient(135deg, #fd79a8, #e84393);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(253, 121, 168, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.cyclone-icon {
+  font-size: 1.2rem;
+}
+
+.cyclone-text {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.weather-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.update-time {
+  font-size: 0.8rem;
+  color: #666;
+  font-style: italic;
+}
+
 .weather-info {
   display: grid;
   grid-template-columns: 1fr;
@@ -265,6 +344,16 @@ body {
   
   .info-label, .info-value {
     font-size: 0.85rem;
+  }
+  
+  .weather-footer {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .update-time {
+    font-size: 0.75rem;
   }
 }
 
