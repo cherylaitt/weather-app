@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import WeatherInfoCard from './components/molecules/WeatherInfoCard';
+import Button from './components/atoms/Button';
 
 interface WeatherData {
   temperature: {
@@ -144,37 +146,39 @@ function App() {
               </h2>
 
               <div className="weather-info">
-                <div className="info-item">
-                  <span className="info-label">📍 Location</span>
-                  <span className="info-value">{weather.place}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">🌡️ Temperature</span>
-                  <span className="info-value">{weather.temperature.data.value}°C</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">💧 Humidity</span>
-                  <span className="info-value">{weather.humidity.data.value}{weather.humidity.data.unit === 'percent' ? '%' : ''}</span>
-
-                  {/* {weather.humidity.recordedTime && (
-                    <span className="info-value">Recorded at {new Date(weather.humidity.recordedTime).toLocaleString()}</span>
-                  )} */}
-                </div>
-                <div className="info-item">
-                  <span className="info-label">☀️ UV Index</span>
-                  <span className="info-value">{weather.uvIndex.value} - {weather.uvIndex.desc}</span>
-                </div>
+                <WeatherInfoCard
+                  label="📍 Location"
+                  value={weather.place}
+                  recordedTime={''}
+                />
+                <WeatherInfoCard
+                  label="🌡️ Temperature"
+                  value={`${weather.temperature.data.value}°C`}
+                  recordedTime={weather.temperature.recordedTime}
+                />
+                <WeatherInfoCard
+                  label="💧 Humidity"
+                  value={`${weather.humidity.data.value}${weather.humidity.data.unit === 'percent' ? '%' : ''}`}
+                  recordedTime={weather.humidity.recordedTime}
+                />
+                <WeatherInfoCard
+                  label="☀️ UV Index"
+                  value={`${weather.uvIndex.value} - ${weather.uvIndex.desc}`}
+                  recordedTime={''}
+                />
                 {weather.lightning && (
-                  <div className="info-item">
-                    <span className="info-label">⚡ Lightning</span>
-                    <span className="info-value">{weather.lightning && weather.lightning?.data?.occur ? 'Detected' : 'None'}</span>
-                  </div>
+                  <WeatherInfoCard
+                    label="⚡ Lightning"
+                    value={weather.lightning?.data?.occur ? 'Detected' : 'None'}
+                    recordedTime={weather.lightning.endTime || weather.lightning.startTime || ''}
+                  />
                 )}
                 {weather.rainfall && weather.rainfall.data && (
-                  <div className="info-item">
-                    <span className="info-label">🌧️ Rainfall</span>
-                    <span className="info-value">{weather.rainfall.data.min}-{weather.rainfall.data.max} {weather.rainfall.data.unit}</span>
-                  </div>
+                  <WeatherInfoCard
+                    label="🌧️ Rainfall"
+                    value={`${weather.rainfall.data.min}-${weather.rainfall.data.max} ${weather.rainfall.data.unit}`}
+                    recordedTime={weather.rainfall.endTime || weather.rainfall.startTime}
+                  />
                 )}
               </div>
               
@@ -211,9 +215,7 @@ function App() {
               <div className="update-time">
                 Last updated: {new Date(weather.updateTime).toLocaleString()}
               </div>
-              <button onClick={fetchWeatherData} className="refresh-btn">
-                🔄 Refresh
-              </button>
+              <Button label="🔄 Refresh" onClick={fetchWeatherData} />
             </div>
           </div>
         )}
