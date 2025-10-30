@@ -84,7 +84,9 @@ dist
 
 # Gatsby files
 .cache/
-public
+# Only ignore root-level public, not client/public
+/public
+!/client/public
 
 # Storybook build outputs
 .out
