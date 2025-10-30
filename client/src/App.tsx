@@ -76,8 +76,9 @@ function App() {
       setLoading(true);
       setError(null);
       
-      // Call our backend API directly
-      const response = await fetch('http://localhost:5001/api/weather?location=Hong Kong Observatory');
+      // Use env-configured API base URL when deployed; fall back to relative path locally
+      const apiBase = process.env.REACT_APP_API_BASE_URL || '';
+      const response = await fetch(`${apiBase}/api/weather?location=Hong Kong Observatory`);
       
       if (!response.ok) {
         const errorData = await response.json();
