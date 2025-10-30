@@ -9,6 +9,7 @@ import { FaRegSun } from 'react-icons/fa';
 import { BsFillLightningFill } from 'react-icons/bs';
 import { FaCloudRain } from 'react-icons/fa';
 import { FiRefreshCw } from 'react-icons/fi';
+import { getHkoEmoji, getHkoCaption } from './utils/hkoWeather';
 
 interface WeatherData {
   temperature: {
@@ -141,7 +142,7 @@ function App() {
           <div className="weather-card">
             <div className="weather-main">
               <div className="weather-icon">
-                {getWeatherIcon(weather.icon)}
+                {getHkoEmoji(weather.icon)}
               </div>
               <div className="temperature">
                 {weather.temperature.data.value}°C
@@ -150,7 +151,7 @@ function App() {
             
             <div className="weather-details">
               <h2 className="weather-description">
-                {weather.description.charAt(0).toUpperCase() + weather.description.slice(1)}
+                {getHkoCaption(weather.icon)}
               </h2>
 
               <div className="weather-info">
@@ -175,10 +176,9 @@ function App() {
                 <WeatherInfoCard
                   icon={<FaRegSun size={20} />}
                   label="UV Index"
-                  value={`${weather.uvIndex.value} - ${weather.uvIndex.desc}`}
-                  recordedTime={''}
+                  value={ !!weather.uvIndex ? `${weather.uvIndex.value} - ${weather.uvIndex.desc}` : 'Not Available'}
                 />
-                {weather.lightning && (
+                {weather.lightning && weather.lightning.data && (
                   <WeatherInfoCard
                     icon={<BsFillLightningFill size={20} />}
                     label="Lightning"
@@ -240,24 +240,3 @@ function App() {
 }
 
 export default App;
-
-const getWeatherIcon = (iconCode: number) => {
-  // Hong Kong Observatory weather icon codes
-  const iconMap: { [key: number]: string } = {
-    50: '☀️', // Sunny
-    51: '⛅', // Partly Cloudy
-    52: '☁️', // Cloudy
-    53: '☁️', // Overcast
-    60: '🌦️', // Light Rain
-    61: '🌧️', // Rain
-    62: '🌧️', // Heavy Rain
-    63: '⛈️', // Thunderstorm
-    64: '☁️', // Overcast
-    65: '🌧️', // Rain
-    70: '❄️', // Snow
-    80: '🌫️', // Mist
-    81: '🌫️', // Fog
-    90: '🌫️'  // Haze
-  };
-  return iconMap[iconCode] || '🌤️';
-};
