@@ -50,7 +50,7 @@ A beautiful, modern weather application that displays real-time weather conditio
 
 3. **Open your browser:**
    - **Development:** `http://localhost:3000`
-   - **Production:** `http://localhost:5001`
+   - **Production:** `https://weather-6t3on0rl6-cherylaitts-projects.vercel.app/`
 
 ## 🏗️ Architecture
 
@@ -66,39 +66,15 @@ A beautiful, modern weather application that displays real-time weather conditio
 - `GET /api/weather` - Fetches current weather data
 - `GET /api/health` - Health check endpoint
 
-## 🌐 Weather Icons
+## Comments
 
-The app displays different emoji icons based on Hong Kong Observatory weather codes:
+### What I like these codes
+- I have enabled opportunity to get weather data from somewhere else in the get weather API.
+- I have used reuable components on Frontend side to unify the styling and to keep the codes clean.
 
-- ☀️ Sunny (50)
-- ⛅ Partly Cloudy (51)
-- ☁️ Cloudy/Overcast (52, 53, 64)
-- 🌦️ Light Rain (60)
-- 🌧️ Rain/Heavy Rain (61, 62, 65)
-- ⛈️ Thunderstorm (63)
-- ❄️ Snow (70)
-- 🌫️ Mist/Fog/Haze (80, 81, 90)
-
-## 🛠️ Development
-
-### Backend Development
-```bash
-npm run server
-# Backend runs on http://localhost:5001
-```
-
-### Frontend Development
-```bash
-cd client && npm start
-# Frontend runs on http://localhost:3000
-```
-
-### Building for Production
-```bash
-npm run build
-npm start
-# Full app runs on http://localhost:5001
-```
+### What I dislike these codes
+- Currently the user needs to click refresh button to refresh the data. It causes additional efforts to the user. It will be better if the data is automatically in sync with HK Observatory.
+- It will be accurate if the icon data can be from one single source as it is now hardcoded in both Frontend and Backend sides.
 
 ## 📊 Data Source
 
